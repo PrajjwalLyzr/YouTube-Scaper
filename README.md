@@ -24,5 +24,5 @@ This app will help you to scrap data of any particular YouTube channel, you can 
 
 
 ### Run the script
-`python yt_scrapper.py`
+`python3 yt_scrapper.py`
 
