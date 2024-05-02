@@ -80,7 +80,11 @@ def csv_maker(dates, titles, likes, views, video_urls, filename):
 
 if __name__ == "__main__":
     api_key = os.getenv('YT_API_KEY')
+
+    # change this id according to the channel you want to scrape on every run.
     channel_id = "UCNU_lfiiWBdtULKOw6X0Dig" #krish naik channel id
+
+    # modify the channel_name as per your choice
     channel_name = 'KrishNaik'
 
     youtube = build(serviceName='youtube', version='v3', developerKey=api_key)
