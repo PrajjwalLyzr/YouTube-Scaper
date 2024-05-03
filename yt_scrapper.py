@@ -47,8 +47,8 @@ def get_videos_ids(youtube, playlist_id):
         # Convert ISO 8601 duration to seconds
         duration_seconds = isodate.parse_duration(duration).total_seconds()
         
-        # Exclude videos with duration less than 1 minutes (60 seconds)
-        if duration_seconds >= 60:
+        # Exclude videos with duration less than 4 minutes (240 seconds)
+        if duration_seconds >= 240:
             video_ids.append(video_id)
     
     next_page_token = response.get('nextPageToken')
@@ -80,9 +80,9 @@ def get_videos_ids(youtube, playlist_id):
                 # Convert ISO 8601 duration to seconds
                 duration_seconds = isodate.parse_duration(duration).total_seconds()
                
-                # Exclude videos with duration less than 1 minutes (60 seconds)
+                # Exclude videos with duration less than 4 minutes (240 seconds)
                
-                if duration_seconds >= 60:
+                if duration_seconds >= 240:
                     video_ids.append(video_id)
 
             next_page_token = response.get('nextPageToken')
@@ -141,7 +141,7 @@ if __name__ == "__main__":
 
 
     # modify the channel_name as per your choice
-    channel_name = 'JasonLemkin'
+    channel_name = 'JasonLemkin4MIN'
 
     youtube = build(serviceName='youtube', version='v3', developerKey=api_key)
     id = get_channel_id(youtube=youtube, channel_id=channel_id)
