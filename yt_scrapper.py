@@ -1,5 +1,7 @@
 from datetime import datetime
 from googleapiclient.discovery import build
+import traceback
+from youtube_transcript_api import YouTubeTranscriptApi
 import isodate
 import pandas as pd
 import os
@@ -30,7 +32,7 @@ def get_videos_ids(youtube, playlist_id):
 
     response = request.execute()
 
-    video_ids = []
+    trasncribed_video_ids = []
 
     for i in range(len(response['items'])):
         video_id = response['items'][i]['contentDetails']['videoId']
@@ -43,13 +45,18 @@ def get_videos_ids(youtube, playlist_id):
         video_response = video_request.execute()
         duration = video_response['items'][0]['contentDetails']['duration']
         
-
         # Convert ISO 8601 duration to seconds
         duration_seconds = isodate.parse_duration(duration).total_seconds()
         
         # Exclude videos with duration less than 4 minutes (240 seconds)
         if duration_seconds >= 240:
-            video_ids.append(video_id)
+            try:
+                vdo_transcription = YouTubeTranscriptApi.get_transcript(video_id)
+            except Exception as e:
+                pass
+            else:
+                if vdo_transcription is not None:
+                    trasncribed_video_ids.append(video_id)
     
     next_page_token = response.get('nextPageToken')
     more_pages = True
@@ -83,11 +90,18 @@ def get_videos_ids(youtube, playlist_id):
                 # Exclude videos with duration less than 4 minutes (240 seconds)
                
                 if duration_seconds >= 240:
-                    video_ids.append(video_id)
+                    try:
+                        vdo_transcription = YouTubeTranscriptApi.get_transcript(video_id)
+                    except Exception as e:
+                        pass
+                    else:
+                        if vdo_transcription is not None:
+                            trasncribed_video_ids.append(video_id)
+                        
 
             next_page_token = response.get('nextPageToken')
 
-    return video_ids
+    return trasncribed_video_ids
 
 
 def get_video_details(youtube, video_ids):
@@ -141,11 +155,12 @@ if __name__ == "__main__":
 
 
     # modify the channel_name as per your choice
-    channel_name = 'JasonLemkin4MIN'
+    channel_name = 'JasonLemkin_4MIN_TRANSC'
 
     youtube = build(serviceName='youtube', version='v3', developerKey=api_key)
     id = get_channel_id(youtube=youtube, channel_id=channel_id)
     vdo_ids = get_videos_ids(youtube=youtube, playlist_id=id)
+    # print(len(vdo_ids))
     video_urls, titles, dates, views, likes = get_video_details(youtube=youtube, video_ids= vdo_ids)
     csv_maker(dates, titles, likes, views, video_urls, filename=channel_name)
 
